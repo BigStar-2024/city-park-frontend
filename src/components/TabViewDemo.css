@@ -24,7 +24,8 @@
     background-color: plum; 
 }
 
-.p-tabview-nav-link:active {
+.p-tabview-nav-link:active,
+.p-tabview-nav-link:focus  {
     background-color: palevioletred; 
 }
 

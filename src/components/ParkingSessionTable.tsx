@@ -136,9 +136,11 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
     const plateNumberBody = (product: ConsolidatedRecord) => (
         <HtmlTooltip title={<div><span className="text-xl text-black">(Plate)</span><img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.plate}`} /></div>}>
-            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.plate}`} />
+            <span><img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.plate}`} /></span>
+
         </HtmlTooltip>
     );
+   
     const vehicleBody = (product: ConsolidatedRecord) => {
         return <>
 
@@ -148,12 +150,12 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                         <div className=''>
                             <span className="text-xl text-black">(Entrance)</span>
                             {/* TODO: Remove */}
-                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle1}`} />
+                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle1}`} alt='No Enterance' />
                         </div>
                         <div className=''>
                             <span className="text-xl text-black">(Exit)</span>
                             {/* TODO: Remove */}
-                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} />
+                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} alt='No Exit' />
                         </div>
                     </>
                 }
@@ -223,9 +225,45 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                             </DataTable>
                         </TabPanel>}
                         {user?.customClaims.admin && <TabPanel header="Paid Sessions">
-                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                                architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-                                voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.</p>
+                            <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                    thead: { className: "text-[14px]" },
+                                    paginator: {
+                                        pageButton: ({ context }: { context: any }) => ({
+                                            className: context.active ? 'bg-blue-500 text-white text-[12px]' : undefined,
+                                        }),
+                                    },
+                                }}>
+                                <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
+                                {/* <Column field="camera" header="Camera" sortable style={{ width: '10%' }}></Column> */}
+                                <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
+                                <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
+                                <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                    <>
+                                        {<span>{item.exitTime && item.entryTime ? (
+                                            (() => {
+                                                const entryTime: Date = new Date(item.entryTime);
+                                                const exitTime: Date = new Date(item.exitTime);
+
+                                                const periodTime: number = exitTime.getTime() - entryTime.getTime(); // Difference in milliseconds
+
+                                                // Convert milliseconds to hours, minutes, and seconds
+                                                const hours: number = Math.floor(periodTime / 3600000);
+                                                const minutes: number = Math.floor((periodTime % 3600000) / 60000);
+                                                const seconds: number = Math.floor((periodTime % 60000) / 1000);
+
+                                                const periodTimeString: string = `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+                                                return <span>{periodTimeString}</span>;
+                                            })()
+                                        ) : (
+                                            <span>Parking</span>
+                                        )}</span>}
+                                    </>
+                                } sortable style={{ width: '20%' }}></Column>
+                                <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
+
+                            </DataTable>
                         </TabPanel>}
                         <TabPanel header="Non-Violation">
                             <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
@@ -238,9 +276,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                 Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
                         </TabPanel>
                         {user?.customClaims.admin && <TabPanel header="Error">
-                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                                cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
+                            <p>None</p>
                         </TabPanel>}
                     </TabView>
                 </div>
