@@ -260,7 +260,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             <span>Parking</span>
                                         )}</span>}
                                     </>
-                                } sortable style={{ width: '20%' }}></Column>
+                                } sortable style={{ width: '30%' }}></Column>
                                 <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
 
                             </DataTable>
