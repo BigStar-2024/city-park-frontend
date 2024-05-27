@@ -120,13 +120,26 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
 
 
+    const [documentCountAmount, setDocumentCountAmount] = useState<Number>()
+
+
     const fetchData = async () => {
-        const { data } = await axios.get(`/data${siteCode ? "/site-code/" + siteCode : ""}`)
-        const consolidatedData = consolidateData(data);
-        setDataArr(consolidatedData);
-        // if (autoUpdate) {
-        timeoutRef.current = setTimeout(fetchData, 30000);
-        // }
+        try {
+            const { data } = await axios.get(`/data${siteCode ? "/site-code/" + siteCode : ""}`)
+            const consolidatedData = consolidateData(data);
+            setDataArr(consolidatedData);
+            // if (autoUpdate) {
+            timeoutRef.current = setTimeout(fetchData, 30000);
+            // }
+            const response = await axios.get('/getPassDataCount');
+            const documentCount = response.data;
+            console.log(`Document count: ${documentCount}`);
+            // Handle the document count data as needed in your frontend
+            setDocumentCountAmount(documentCount);
+        } catch (error) {
+            console.error(error);
+            // Handle any errors that occur during the request
+        }
     };
 
     useEffect(() => {
@@ -140,7 +153,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
         </HtmlTooltip>
     );
-   
+
     const vehicleBody = (product: ConsolidatedRecord) => {
         return <>
 
@@ -155,7 +168,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                         <div className=''>
                             <span className="text-xl text-black">(Exit)</span>
                             {/* TODO: Remove */}
-                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} alt='No Exit' />
+                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} alt='Currently Parking...' />
                         </div>
                     </>
                 }
@@ -174,7 +187,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                     <div className='p-2 rounded-md bg-blue-700 flex justify-center items-center w-fit cursor-pointer hover:opacity-80'>
                         <svg className='w-4 h-4 fill-white'><use href="#svg-refresh" /></svg>
                     </div>
-                    <div className='px-3 py-1 border border-[#ccc] rounded-md text-sm'>5115 Records</div>
+                    <div className='px-3 py-1 border border-[#ccc] rounded-md text-sm'>{documentCountAmount?.toString()} Records</div>
                 </div>
             </div>
             <div className='flex max-md:flex-col justify-between items-center'>
@@ -266,17 +279,89 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                             </DataTable>
                         </TabPanel>}
                         <TabPanel header="Non-Violation">
-                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                                cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
+                            <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                    thead: { className: "text-[14px]" },
+                                    paginator: {
+                                        pageButton: ({ context }: { context: any }) => ({
+                                            className: context.active ? 'bg-blue-500 text-white text-[12px]' : undefined,
+                                        }),
+                                    },
+                                }}>
+                                <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
+                                {/* <Column field="camera" header="Camera" sortable style={{ width: '10%' }}></Column> */}
+                                <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
+                                <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
+                                <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                    <>
+                                        {<span>{item.exitTime && item.entryTime ? (
+                                            (() => {
+                                                const entryTime: Date = new Date(item.entryTime);
+                                                const exitTime: Date = new Date(item.exitTime);
+
+                                                const periodTime: number = exitTime.getTime() - entryTime.getTime(); // Difference in milliseconds
+
+                                                // Convert milliseconds to hours, minutes, and seconds
+                                                const hours: number = Math.floor(periodTime / 3600000);
+                                                const minutes: number = Math.floor((periodTime % 3600000) / 60000);
+                                                const seconds: number = Math.floor((periodTime % 60000) / 1000);
+
+                                                const periodTimeString: string = `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+                                                return <span>{periodTimeString}</span>;
+                                            })()
+                                        ) : (
+                                            <span>Parking</span>
+                                        )}</span>}
+                                    </>
+                                } sortable style={{ width: '30%' }}></Column>
+                                <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
+
+                            </DataTable>
                         </TabPanel>
                         <TabPanel header="Violations">
-                            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                                cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
-                                Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.</p>
+                        <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                    thead: { className: "text-[14px]" },
+                                    paginator: {
+                                        pageButton: ({ context }: { context: any }) => ({
+                                            className: context.active ? 'bg-blue-500 text-white text-[12px]' : undefined,
+                                        }),
+                                    },
+                                }}>
+                                <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
+                                {/* <Column field="camera" header="Camera" sortable style={{ width: '10%' }}></Column> */}
+                                <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
+                                <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
+                                <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                    <>
+                                        {<span>{item.exitTime && item.entryTime ? (
+                                            (() => {
+                                                const entryTime: Date = new Date(item.entryTime);
+                                                const exitTime: Date = new Date(item.exitTime);
+
+                                                const periodTime: number = exitTime.getTime() - entryTime.getTime(); // Difference in milliseconds
+
+                                                // Convert milliseconds to hours, minutes, and seconds
+                                                const hours: number = Math.floor(periodTime / 3600000);
+                                                const minutes: number = Math.floor((periodTime % 3600000) / 60000);
+                                                const seconds: number = Math.floor((periodTime % 60000) / 1000);
+
+                                                const periodTimeString: string = `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+                                                return <span>{periodTimeString}</span>;
+                                            })()
+                                        ) : (
+                                            <span>Parking</span>
+                                        )}</span>}
+                                    </>
+                                } sortable style={{ width: '30%' }}></Column>
+                                <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
+
+                            </DataTable>
                         </TabPanel>
                         {user?.customClaims.admin && <TabPanel header="Error">
-                            <p>None</p>
+                            <h1>Now, there aren't any errors.</h1>
                         </TabPanel>}
                     </TabView>
                 </div>
