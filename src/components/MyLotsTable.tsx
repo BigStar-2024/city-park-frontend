@@ -123,7 +123,7 @@ export default function MyLotsTable() {
                         <div className=''>
                             <span className="text-xl text-black">(Exit)</span>
                             {/* TODO: Remove */}
-                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} alt='Currently Parking...'/>
+                            <img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.vehicle2}`} />
                         </div>
                     </>
                 }
