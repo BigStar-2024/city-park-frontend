@@ -1,15 +1,14 @@
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import StoreProvider from "./store/store.tsx";
+import SVGs from "./components/svg.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter } from "react-router-dom";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import StoreProvider from './store/store.tsx'
-import SVGs from './components/svg.tsx'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter } from 'react-router-dom'
-import { ConfirmDialog } from 'primereact/confirmdialog'
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <>
     <SVGs />
     <ToastContainer
@@ -23,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       draggable
       pauseOnHover
       theme="colored"
-    />    
+    />
     <ConfirmDialog />
     <BrowserRouter>
       <StoreProvider>
@@ -31,4 +30,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </StoreProvider>
     </BrowserRouter>
   </>
-)
+);
