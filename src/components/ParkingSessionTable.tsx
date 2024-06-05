@@ -342,7 +342,7 @@
 //     );
 // }
 
-import { useEffect,useRef,  useState } from 'react';
+import { useEffect, useRef,  useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import HtmlTooltip from './HtmlToolTip';
@@ -431,7 +431,20 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         }
     };
 
+    const [refresh, setRefresh] = useState(false);
     useEffect(() => {
+        const timeout = setInterval(() => {
+          // Run your function here
+            console.log("Function is running after 5 seconds");
+            setRefresh(pre => !pre);
+          
+        }, 2000);
+    
+        return () => clearInterval(timeout);
+      }, [refresh]);
+    useEffect(() => {
+
+
         fetchData();
         return () => clearTimeout(timeoutRef.current || undefined);
     }, []);
@@ -469,17 +482,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
 
     const getLogData = (lot: string, plateNumber: string): any => {
-
+        
         const session = paidSessions.find((s: any) => s.parkName === lot && s.licensePlateNumber === plateNumber && !usedPaymentLogs.includes(s._id));
+        console.log("1--------------", usedPaymentLogs);
+        console.log(" Sessions",session);
+        
         if (session) {
-            console.log("--------------------->", session);
+            console.log("222222-------------->", usedPaymentLogs);
             count++;
             if (count == 3) {
                 count = 0;
                 usedPaymentLogs.push(session._id)
-                console.log("-----------fffffffffffffffff-", usedPaymentLogs);
+                console.log("======>", usedPaymentLogs);
             }
             console.log('Hello', { createDate: session['createDate'], status: session['status'], amount: session['amount'] });
+
             return { createDate: session['createDate'], status: session['status'], amount: '$' + session['amount'] };
 
         } else {
@@ -489,7 +506,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
     return (
         <>
-            { (
+            {(
                 <div className="p-2 bg-white rounded-lg w-min-[1300px] overflow-x-auto">
                     <div className="flex justify-between">
                         <h1 className='font-bold p-2 text-lg'>Sessions & Violations</h1>
