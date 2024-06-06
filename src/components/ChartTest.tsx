@@ -135,13 +135,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AreaChart, Card } from "@tremor/react";
 import LineChart from "./LineChart";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 const valueFormatter = (number: number) =>
   `${Intl.NumberFormat("us").format(number).toString()}`;
 
 const ChartTest: FC<any> = () => {
-  const [data, setData] = useState([
+//   const [data, setData] = useState([
+    const data = [
     {
       date: "Jan 23",
       Commissions: 232,
@@ -202,7 +203,8 @@ const ChartTest: FC<any> = () => {
       Commissions: 321,
       Revenue: 120,
     },
-  ]);
+//   ]);
+    ];
 
   return (
     <div className="flex max-lg:flex-col gap-8">
