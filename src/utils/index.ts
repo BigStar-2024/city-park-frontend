@@ -31,7 +31,7 @@ export const showToast = (msg: string, success: boolean = false) => {
 
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_SERVER_URL = "http://localhost:5000"; // Replace with your actual server URL
+const SOCKET_SERVER_URL = "https://city-park-lot.run.place"; // Replace with your actual server URL
 
 let socket: Socket;
 

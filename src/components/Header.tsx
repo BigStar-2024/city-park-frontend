@@ -114,11 +114,11 @@ const Header: FC<Props> = ({ user }) => {
   };
 
   useEffect(() => {
-    connectSocket();
+    user && connectSocket();
 
-    user && fetchMessages();
+    user?.customClaims.admin && fetchMessages();
 
-    subscribeToMessages(async () => {
+    user?.customClaims.admin && subscribeToMessages(async () => {
       await fetchMessages();
 
       setMBadge((preValue) => preValue + 1);
