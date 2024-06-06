@@ -68,7 +68,7 @@ const Header: FC<Props> = ({ user }) => {
   const [mBadge, setMBadge] = useState<number>(0);
   const [aBadge, setABadge] = useState<number>(0);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [alerms, setAlarms] = useState([
+  const [alarms, setAlarms] = useState([
     {
       sender: "test 1",
       content: "This is a test alarm",
@@ -84,7 +84,7 @@ const Header: FC<Props> = ({ user }) => {
 
   const handleAlarmView = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    setListItems(alerms);
+    setListItems(alarms);
     setABadge(0);
   };
 
