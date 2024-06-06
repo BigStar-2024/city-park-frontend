@@ -57,7 +57,7 @@ import axios from "axios";
 import { MessageType } from "../types";
 
 type Props = {
-  user: userPrimitiveType | null;
+  user?: userPrimitiveType | null;
 };
 
 const Header: FC<Props> = ({ user }) => {
@@ -68,13 +68,13 @@ const Header: FC<Props> = ({ user }) => {
   const [mBadge, setMBadge] = useState<number>(0);
   const [aBadge, setABadge] = useState<number>(0);
   const [messages, setMessages] = useState<MessageType[]>([]);
-//   const [alarms, setAlarms] = useState([
-//     {
-//       sender: "test 1",
-//       content: "This is a test alarm",
-//     },
-//   ]);
-const alarms = [
+  //   const [alarms, setAlarms] = useState([
+  //     {
+  //       sender: "test 1",
+  //       content: "This is a test alarm",
+  //     },
+  //   ]);
+  const alarms = [
     {
       sender: "test 1",
       content: "This is a test alarm",
@@ -166,89 +166,91 @@ const alarms = [
           </div>
         </div>
       </div>
-      <div className="flex gap-6 items-center px-4 cursor-pointer">
-        <IconButton aria-label="cart" onClick={handleMessageView}>
-          <Badge
-            badgeContent={user?.customClaims.admin ? mBadge : 0}
-            color="info"
-          >
-            <svg className="w-6 h-6 fill-white max-sm:hidden">
-              <use href="#svg-email" />
-            </svg>
-          </Badge>
-        </IconButton>
-
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-          {user?.customClaims.admin ? (
-            <List>
-              {lestItems.length ? (
-                lestItems.map((item: any, index: number) => (
-                  <div key={index}>
-                    <ListItem className="max-w-80">
-                      <ListItemText
-                        primary={item.content}
-                        secondary={item.sender}
-                      />
-                    </ListItem>
-                    <Divider component="li" />
-                  </div>
-                ))
-              ) : (
-                <ListItem className="max-w-80">
-                  {"There is no messages"}
-                </ListItem>
-              )}
-            </List>
-          ) : (
-            <div className="p-5">
-              <Typography sx={{ p: 2 }}>How can we help you?</Typography>
-              <Textarea
-                rows={5}
-                cols={30}
-                maxLength={60}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="What do you need?"
-              />
-              <Button
-                icon={RiCheckFill}
-                onClick={submitMessage}
-                color="green"
-                disabled={!message}
-                className="mt-5 w-full bg-[#22cbad] hover:bg-[#30b39b]"
-              >
-                Submit
-              </Button>
-            </div>
-          )}
-        </Popover>
-
-        {user?.customClaims.admin && (
-          <IconButton aria-label="cart" onClick={handleAlarmView}>
-            <Badge badgeContent={aBadge} color="info">
+      {user && (
+        <div className="flex gap-6 items-center px-4 cursor-pointer">
+          <IconButton aria-label="cart" onClick={handleMessageView}>
+            <Badge
+              badgeContent={user?.customClaims.admin ? mBadge : 0}
+              color="info"
+            >
               <svg className="w-6 h-6 fill-white max-sm:hidden">
-                <use href="#svg-ring" />
+                <use href="#svg-email" />
               </svg>
             </Badge>
           </IconButton>
-        )}
-        <img
-          className="rounded-full w-10 h-10 min-w-10 min-h-10 float-right"
-          src={
-            user?.photoURL ||
-            `${import.meta.env.VITE_API_BACKEND_URL}public/user.png`
-          }
-        />
-      </div>
+
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            {user?.customClaims.admin ? (
+              <List>
+                {lestItems.length ? (
+                  lestItems.map((item: any, index: number) => (
+                    <div key={index}>
+                      <ListItem className="max-w-80">
+                        <ListItemText
+                          primary={item.content}
+                          secondary={item.sender}
+                        />
+                      </ListItem>
+                      <Divider component="li" />
+                    </div>
+                  ))
+                ) : (
+                  <ListItem className="max-w-80">
+                    {"There is no messages"}
+                  </ListItem>
+                )}
+              </List>
+            ) : (
+              <div className="p-5">
+                <Typography sx={{ p: 2 }}>How can we help you?</Typography>
+                <Textarea
+                  rows={5}
+                  cols={30}
+                  maxLength={60}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="What do you need?"
+                />
+                <Button
+                  icon={RiCheckFill}
+                  onClick={submitMessage}
+                  color="green"
+                  disabled={!message}
+                  className="mt-5 w-full bg-[#22cbad] hover:bg-[#30b39b]"
+                >
+                  Submit
+                </Button>
+              </div>
+            )}
+          </Popover>
+
+          {user?.customClaims.admin && (
+            <IconButton aria-label="cart" onClick={handleAlarmView}>
+              <Badge badgeContent={aBadge} color="info">
+                <svg className="w-6 h-6 fill-white max-sm:hidden">
+                  <use href="#svg-ring" />
+                </svg>
+              </Badge>
+            </IconButton>
+          )}
+          <img
+            className="rounded-full w-10 h-10 min-w-10 min-h-10 float-right"
+            src={
+              user?.photoURL ||
+              `${import.meta.env.VITE_API_BACKEND_URL}public/user.png`
+            }
+          />
+        </div>
+      )}
       <Toast ref={toast} />
     </div>
   );
