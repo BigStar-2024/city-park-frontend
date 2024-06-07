@@ -173,12 +173,13 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         }
         return false;
     });
-    const non_violationArr = dataArr.filter(item => 
-        !violationArr.some(violation => 
+    const non_violationArr = dataArr.filter(item =>
+        !violationArr.some(violation =>
             violation.lot === item.lot && violation.plateNumber === item.plateNumber
         )
     );
 
+    
     return (
         <>
             {(
@@ -389,3 +390,5 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         </>
     );
 }
+
+

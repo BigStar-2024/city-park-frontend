@@ -24,11 +24,44 @@
     background-color: plum; 
 }
 
-.p-tabview-nav-link:active,
+/* .p-tabview-nav-link:active,
 .p-tabview-nav-link:focus  {
     background-color: palevioletred; 
-}
+} */
 
 .p-unselectable-text {
     margin: 0px 4px;
 }
+
+
+/* General style for all tab buttons */
+.p-tabview-nav li a {
+    color: #ffffff !important; /* Same font color for all tabs */
+}
+
+/* Specific background colors for each tab */
+.p-tabview-nav li:nth-child(1) a {
+    background-color: #ff0000 !important; /* Red background for the first tab */
+}
+
+.p-tabview-nav li:nth-child(2) a {
+    background-color: #008700 !important; /* Green background for the second tab */
+}
+
+.p-tabview-nav li:nth-child(3) a {
+    background-color: #e28203 !important; /* Blue background for the third tab */
+}
+
+.p-tabview-nav li:nth-child(4) a {
+    background-color: #001f18 !important; /* Green background for the second tab */
+}
+
+.p-tabview-nav li:nth-child(5) a {
+    background-color: #9300b0 !important; /* Blue background for the third tab */
+}
+
+.p-tabview-nav li a.active {
+    background-color: #ffff00 !important; /* Yellow background for the active tab */
+}
+
+/* Add more styles for additional tabs as needed */
