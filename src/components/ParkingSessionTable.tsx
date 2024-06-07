@@ -173,12 +173,13 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         }
         return false;
     });
-    const non_violationArr = dataArr.filter(item => 
-        !violationArr.some(violation => 
+    const non_violationArr = dataArr.filter(item =>
+        !violationArr.some(violation =>
             violation.lot === item.lot && violation.plateNumber === item.plateNumber
         )
     );
 
+    
     return (
         <>
             {(
@@ -261,17 +262,17 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        } sortable style={{ width: '24%' }}></Column>
                                         <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
-                                        } sortable style={{ width: '10%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column>
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
                                             </>
-                                        } sortable style={{ width: '10%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
@@ -389,3 +390,5 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         </>
     );
 }
+
+
