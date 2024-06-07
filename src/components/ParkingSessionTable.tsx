@@ -600,7 +600,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                     </DataTable>
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
-                                    <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
                                         value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
                                             thead: { className: "text-[14px]" },
                                             paginator: {
@@ -634,7 +634,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                 )}</span>}
                                             </>
                                         } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
+                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
+                                            </>
+                                        } sortable style={{ width: '20%' }}></Column>
+                                        <Column field="paid result" header="Paid" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
+                                            </>
+                                        } sortable style={{ width: '10%' }}></Column>
+                                        <Column field="paid status" header="Paid Status" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
+                                            </>
+                                        } sortable style={{ width: '10%' }}></Column>
                                     </DataTable>
                                 </TabPanel>
                                 <TabPanel header="Violations">
