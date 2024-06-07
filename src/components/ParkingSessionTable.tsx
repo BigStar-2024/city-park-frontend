@@ -262,17 +262,17 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        } sortable style={{ width: '24%' }}></Column>
                                         <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
-                                        } sortable style={{ width: '10%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column>
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
                                             </>
-                                        } sortable style={{ width: '10%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
