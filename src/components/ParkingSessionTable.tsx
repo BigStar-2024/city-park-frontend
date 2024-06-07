@@ -140,11 +140,9 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     const getLogData = (lot: string, plateNumber: string): any => {
 
         const session = paidSessions.find((s: any) => s.parkName === lot && s.licensePlateNumber === plateNumber && !usedPaymentLogs.includes(s._id));
-        console.log("1--------------", usedPaymentLogs);
-        console.log(" Sessions", session);
 
         if (session) {
-            console.log("222222-------------->", usedPaymentLogs);
+            console.log("----->", usedPaymentLogs);
             count++;
             if (count == 3) {
                 count = 0;
@@ -159,6 +157,27 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             return { createDate: "", status: "", amount: "" };
         }
     };
+    // Utility function to calculate parking time in hours
+    const calculateParkingTimeInHours = (entryTime: string, exitTime: string): number => {
+        const entryDate = new Date(entryTime);
+        const exitDate = new Date(exitTime);
+        const periodTime = (exitDate.getTime() - entryDate.getTime()) / 3600000; // Convert milliseconds to hours
+        return periodTime;
+    };
+    // Filtering data based on the condition
+    const violationArr = dataArr.filter((item) => {
+        if (item.entryTime && item.exitTime) {
+            const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+            const amount = getLogData(item.lot, item.plateNumber).amount;
+            return amount < 3 * parkingTimeInHours;
+        }
+        return false;
+    });
+    const non_violationArr = dataArr.filter(item => 
+        !violationArr.some(violation => 
+            violation.lot === item.lot && violation.plateNumber === item.plateNumber
+        )
+    );
 
     return (
         <>
@@ -257,7 +276,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
                                     <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
-                                        value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                        value={non_violationArr} tableStyle={{ minWidth: '50rem' }} pt={{
                                             thead: { className: "text-[14px]" },
                                             paginator: {
                                                 pageButton: ({ context }: { context: any }) => ({
@@ -309,7 +328,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                 </TabPanel>
                                 <TabPanel header="Violations">
                                     <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
-                                        value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                        value={violationArr} tableStyle={{ minWidth: '50rem' }} pt={{
                                             thead: { className: "text-[14px]" },
                                             paginator: {
                                                 pageButton: ({ context }: { context: any }) => ({
