@@ -342,7 +342,7 @@
 //     );
 // }
 
-import { useEffect, useRef,  useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import HtmlTooltip from './HtmlToolTip';
@@ -434,14 +434,14 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     const [refresh, setRefresh] = useState(false);
     useEffect(() => {
         const timeout = setInterval(() => {
-          // Run your function here
+            // Run your function here
             console.log("Function is running after 5 seconds");
             setRefresh(pre => !pre);
-          
+
         }, 2000);
-    
+
         return () => clearInterval(timeout);
-      }, [refresh]);
+    }, [refresh]);
     useEffect(() => {
 
 
@@ -482,11 +482,11 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
 
     const getLogData = (lot: string, plateNumber: string): any => {
-        
+
         const session = paidSessions.find((s: any) => s.parkName === lot && s.licensePlateNumber === plateNumber && !usedPaymentLogs.includes(s._id));
         console.log("1--------------", usedPaymentLogs);
-        console.log(" Sessions",session);
-        
+        console.log(" Sessions", session);
+
         if (session) {
             console.log("222222-------------->", usedPaymentLogs);
             count++;
@@ -600,7 +600,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                     </DataTable>
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
-                                <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                    <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
                                         value={dataArr} tableStyle={{ minWidth: '50rem' }} pt={{
                                             thead: { className: "text-[14px]" },
                                             paginator: {
@@ -686,7 +686,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                 )}</span>}
                                             </>
                                         } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="paid result" header="Paid" sortable style={{ width: '10%' }}></Column>
+                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
+                                            </>
+                                        } sortable style={{ width: '20%' }}></Column>
+                                        <Column field="paid result" header="Paid" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
+                                            </>
+                                        } sortable style={{ width: '10%' }}></Column>
+                                        <Column field="paid status" header="Paid Status" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
+                                            </>
+                                        } sortable style={{ width: '10%' }}></Column>
                                     </DataTable>
                                 </TabPanel>
                                 {user?.customClaims.admin && <TabPanel header="Error">
