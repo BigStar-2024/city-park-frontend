@@ -178,6 +178,31 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             violation.lot === item.lot && violation.plateNumber === item.plateNumber
         )
     );
+    // const violationArr = dataArr.filter((item) => {
+    //     if (item.entryTime && item.exitTime) {
+    //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+    //         const amount = getLogData(item.lot, item.plateNumber).amount;
+    //         let extractedNumber = parseFloat(amount.replace(/[^0-9.]/g, ''));
+    //         extractedNumber = isNaN(extractedNumber) ? 0 : extractedNumber;
+    //         return extractedNumber < 3 * parkingTimeInHours;
+    //     }
+    //     return false;
+    // });
+    // const non_violationArr = dataArr.filter((item) => {
+    //     console.log('item', item);
+        
+    //     if (item.entryTime && item.exitTime) {
+    //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+    //         const amount = getLogData(item.lot, item.plateNumber).amount;
+             
+    //         let extractedNumber = parseFloat(amount.replace(/[^0-9.]/g, ''));
+    //         extractedNumber = isNaN(extractedNumber) ? 0 : extractedNumber;
+    //         console.log('afe', extractedNumber);
+            
+    //         return extractedNumber > 3 * parkingTimeInHours;
+    //     }
+    //     return false;
+    // });
 
     
     return (
