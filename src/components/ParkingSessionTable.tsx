@@ -102,8 +102,18 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     }, [refresh]);
 
     useEffect(() => {
+        try {
+            axios.post("/violation/list-save", {dates: violationArr})
+            .then((res) => {
+                console.log("violation", res)
+            })
+            .catch(() => {
 
-        axios.post("/violationapp/list-save", {violationArr});
+            });
+        } catch(error) {
+
+        }
+        
 
     }, [violationArr])
 
@@ -280,7 +290,17 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
-                                        <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        {/* <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.exitTime && item.entryTime ? (
                                                     (() => {
@@ -301,17 +321,17 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                     <span>Parking</span>
                                                 )}</span>}
                                             </>
-                                        } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '30%' }}></Column> */}
+                                        <Column field="created date" header="Paid Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
                                         } sortable style={{ width: '24%' }}></Column>
-                                        <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
+                                        {/* <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column> */}
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
