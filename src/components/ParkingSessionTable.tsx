@@ -261,7 +261,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
-                                        <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                        {/* <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.exitTime && item.entryTime ? (
                                                     (() => {
@@ -282,17 +282,27 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                     <span>Parking</span>
                                                 )}</span>}
                                             </>
-                                        } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '30%' }}></Column> */}
+                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
                                         } sortable style={{ width: '24%' }}></Column>
-                                        <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
+                                        {/* <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column> */}
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
@@ -313,38 +323,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
-                                        <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{item.exitTime && item.entryTime ? (
-                                                    (() => {
-                                                        const entryTime: Date = new Date(item.entryTime);
-                                                        const exitTime: Date = new Date(item.exitTime);
-
-                                                        const periodTime: number = exitTime.getTime() - entryTime.getTime();
-
-                                                        const hours: number = Math.floor(periodTime / 3600000);
-                                                        const minutes: number = Math.floor((periodTime % 3600000) / 60000);
-                                                        const seconds: number = Math.floor((periodTime % 60000) / 1000);
-
-                                                        const periodTimeString: string = `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-
-                                                        return <span>{periodTimeString}</span>;
-                                                    })()
-                                                ) : (
-                                                    <span>Parking</span>
-                                                )}</span>}
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
                                         } sortable style={{ width: '20%' }}></Column>
-                                        <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
-                                            </>
-                                        } sortable style={{ width: '10%' }}></Column>
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
@@ -365,38 +358,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
-                                        <Column field="parking time" header="Parking Time" body={(item: ConsolidatedRecord) =>
+                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{item.exitTime && item.entryTime ? (
-                                                    (() => {
-                                                        const entryTime: Date = new Date(item.entryTime);
-                                                        const exitTime: Date = new Date(item.exitTime);
-
-                                                        const periodTime: number = exitTime.getTime() - entryTime.getTime();
-
-                                                        const hours: number = Math.floor(periodTime / 3600000);
-                                                        const minutes: number = Math.floor((periodTime % 3600000) / 60000);
-                                                        const seconds: number = Math.floor((periodTime % 60000) / 1000);
-
-                                                        const periodTimeString: string = `${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-
-                                                        return <span>{periodTimeString}</span>;
-                                                    })()
-                                                ) : (
-                                                    <span>Parking</span>
-                                                )}</span>}
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '30%' }}></Column>
-                                        <Column field="created date" header="CreatedDate" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '15%' }}></Column>
+                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
                                             </>
                                         } sortable style={{ width: '20%' }}></Column>
-                                        <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
-                                            </>
-                                        } sortable style={{ width: '10%' }}></Column>
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
