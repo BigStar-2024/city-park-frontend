@@ -72,7 +72,6 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             const { data } = await axios.get(`/data${siteCode ? "/site-code/" + siteCode : ""}`)
             const consolidatedData = consolidateData(data);
             setDataArr(consolidatedData);
-            console.log("violation list: ", consolidatedData);
             const response = await axios.get('/getPassDataCount');
             const documentCount = response.data;
             console.log(`Document count: ${documentCount}`);
@@ -103,7 +102,12 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
     useEffect(() => {
 
-        axios.post("/violationapp/list-save", {violationArr});
+        axios.post("https://city-park-lot.run.place/city-park-lot/api/end-user/violation/list-save",{violationArr})
+        .then((res) => {
+            console.log("🤷‍♂️ ===>",res.data)
+        })
+        .catch(err => {console.log("🤦‍♂️", err)});
+        console.log("violationArr", violationArr)
 
     }, [violationArr])
 
