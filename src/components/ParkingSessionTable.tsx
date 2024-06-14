@@ -7,6 +7,7 @@ import { useAuthorize } from '../store/store';
 import { DataItem, ConsolidatedRecord } from '../types';
 import { TabView, TabPanel } from 'primereact/tabview';
 import './TabViewDemo.css';
+import { color } from 'd3-color';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -213,21 +214,21 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     // });
     // const non_violationArr = dataArr.filter((item) => {
     //     console.log('item', item);
-        
+
     //     if (item.entryTime && item.exitTime) {
     //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
     //         const amount = getLogData(item.lot, item.plateNumber).amount;
-             
+
     //         let extractedNumber = parseFloat(amount.replace(/[^0-9.]/g, ''));
     //         extractedNumber = isNaN(extractedNumber) ? 0 : extractedNumber;
     //         console.log('afe', extractedNumber);
-            
+
     //         return extractedNumber > 3 * parkingTimeInHours;
     //     }
     //     return false;
     // });
 
-    
+
     return (
         <>
             {(
@@ -380,27 +381,45 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         }}>
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
-                                        <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
-                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
+                                        {/* <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column> */}
+                                        {/* <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>} 
                                             </>
-                                        } sortable style={{ width: '15%' }}></Column>
-                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '15%' }}></Column> */}
+                                        <Column
+                                            header="Time in & Time out"
+                                            body={(item: ConsolidatedRecord) => (
+                                                <>
+                                                    {item.entryTime ? new Date(item.entryTime).toLocaleTimeString("en-us", { timeStyle: 'short' }) : ""}
+                                                    {" - "}
+                                                    {item.exitTime ? new Date(item.exitTime).toLocaleTimeString("en-us", { timeStyle: 'short' }) : ""}
+                                                </>
+                                            )}
+                                            sortable
+                                            style={{ width: '20%' }}
+                                        ></Column>;
+                                        <Column header="Date of violation" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us", { dateStyle: 'short' }) : ""}</span>}
                                             </>
                                         } sortable style={{ width: '15%' }}></Column>
-                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
+                                        <Column field="paid status" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
+                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        } sortable style={{ width: '10%' }}></Column>
                                         <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
                                             </>
                                         } sortable style={{ width: '10%' }}></Column>
+                                        <Column field="charge notice" header="Ticket template" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<div><button className='temp_pdf temp_edit'>   Edit   </button></div>}
+                                                {<div><button  className='temp_pdf'>Sent / Open</button></div>}                                                
+                                            </>
+                                        } sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>
                                 {user?.customClaims.admin && <TabPanel header="Error">
