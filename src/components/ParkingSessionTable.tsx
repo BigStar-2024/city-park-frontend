@@ -7,7 +7,6 @@ import { useAuthorize } from '../store/store';
 import { DataItem, ConsolidatedRecord } from '../types';
 import { TabView, TabPanel } from 'primereact/tabview';
 import './TabViewDemo.css';
-import { color } from 'd3-color';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -391,7 +390,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                 {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
                                             </>
                                         } sortable style={{ width: '10%' }}></Column>
-                                        <Column field="charge notice" header="Ticket template" body={(item: ConsolidatedRecord) =>
+                                        <Column field="charge notice" header="Ticket template" body={() =>
                                             <>
                                                 {<div><button className='temp_pdf temp_edit'>   Edit   </button></div>}
                                                 {<div><button  className='temp_pdf'>Sent / Open</button></div>}                                                
