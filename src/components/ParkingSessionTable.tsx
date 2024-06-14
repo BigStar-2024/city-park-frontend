@@ -383,7 +383,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
                                         <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>} 
                                             </>
                                         } sortable style={{ width: '15%' }}></Column>
                                         <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
