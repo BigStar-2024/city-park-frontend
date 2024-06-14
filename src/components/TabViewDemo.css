@@ -65,3 +65,15 @@
 }
 
 /* Add more styles for additional tabs as needed */
+
+.temp_pdf {
+    color: blue;
+    text-align: center; 
+}
+.temp_pdf:hover {
+    color: red;
+}
+
+.temp_edit {
+    padding-left: 30px;
+}
