@@ -450,6 +450,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             }
                                             return <span></span>;
                                         }} sortable style={{ width: '30%' }}></Column>
+                                        
                                     </DataTable>
                                 </TabPanel>}
                             </TabView>
