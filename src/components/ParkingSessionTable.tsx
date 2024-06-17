@@ -14,6 +14,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     const { user } = useAuthorize();
     const [dataArr, setDataArr] = useState<ConsolidatedRecord[]>([]);
     const [paidSessions, setPaidSessions] = useState<any[]>([]);
+    const [violationArr, setViolationArr] = useState<any[]>([]);
     // const [isLoading, setIsLoading] = useState(true);
     // const [usedPaymentLogs, setUsedPaymentLogs] = useState<Set<string>>(new Set());
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -71,7 +72,6 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             const { data } = await axios.get(`/data${siteCode ? "/site-code/" + siteCode : ""}`)
             const consolidatedData = consolidateData(data);
             setDataArr(consolidatedData);
-
             const response = await axios.get('/getPassDataCount');
             const documentCount = response.data;
             console.log(`Document count: ${documentCount}`);
@@ -88,6 +88,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
     };
 
     const [refresh, setRefresh] = useState(false);
+
     useEffect(() => {
         const timeout = setInterval(() => {
             // Run your function here
@@ -98,9 +99,31 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
         return () => clearInterval(timeout);
     }, [refresh]);
+
     useEffect(() => {
 
+        axios.post("https://city-park-lot.run.place/city-park-lot/api/end-user/violation/list-save",{violationArr})
+        .then((res) => {
+            console.log("🤷‍♂️ ===>",res.data)
+        })
+        .catch(err => {console.log("🤦‍♂️", err)});
+        console.log("violationArr", violationArr)
 
+    }, [violationArr])
+
+    useEffect(() => {
+        const fileteredViolationArr = dataArr.filter((item) => {
+            if (item.entryTime && item.exitTime) {
+                const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+                const amount = getLogData(item.lot, item.plateNumber).amount;
+                return amount < 3 * parkingTimeInHours;
+            }
+            return false;
+        });
+        setViolationArr(fileteredViolationArr);
+    }, [dataArr])
+
+    useEffect(() => {
         fetchData();
         return () => clearTimeout(timeoutRef.current || undefined);
     }, []);
@@ -190,7 +213,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
 
     const errorArr = dataArr.filter(item => !violationArr.includes(item)).filter(item => !non_violationArr.includes(item))
      
-    
+
 
 
     return (
@@ -368,7 +391,7 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         {/* <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column> */}
                                         {/* <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>} 
                                             </>
                                         } sortable style={{ width: '15%' }}></Column> */}
                                         <Column
