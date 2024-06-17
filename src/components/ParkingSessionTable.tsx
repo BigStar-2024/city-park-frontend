@@ -87,25 +87,13 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             // setIsLoading(false);
         }
     };
-    console.log(dataArr);
     
-    // const [refresh, setRefresh] = useState(false);
-    // useEffect(() => {
-    //     const timeout = setInterval(() => {
-    //         // Run your function here
-    //         console.log("Function is running after 5 seconds, please wait for this.");
-    //         setRefresh(pre => !pre);
-
-    //     }, 2000);
-
-    //     return () => clearInterval(timeout);
-    // }, [refresh]);
+   
 
     useEffect(() => {
         fetchData();
         return () => clearTimeout(timeoutRef.current || undefined);
     }, []);
-    console.log("paid Session => ", paidSessions)
 
     const plateNumberBody = (product: ConsolidatedRecord) => (
         <HtmlTooltip title={<div><span className="text-xl text-black">(Plate)</span><img src={`${import.meta.env.VITE_API_BACKEND_URL}public/${product.plate}`} /></div>}>
@@ -145,24 +133,15 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
             const entryUtc = new Date(entry.getUTCFullYear(), entry.getUTCMonth(), entry.getUTCDate(), entry.getUTCHours(), entry.getUTCMinutes(), entry.getUTCSeconds(), entry.getUTCMilliseconds());
             const exit = new Date(exitTime);
             const exitUtc = new Date(exit.getUTCFullYear(), exit.getUTCMonth(), exit.getUTCDate(), exit.getUTCHours(), exit.getUTCMinutes(), exit.getUTCSeconds(), exit.getUTCMilliseconds());
-            console.log('paidSessions', paidSessions);
 
             const session = paidSessions.find((s: any) => {
                 const create = new Date(s.createDate);
-                console.log("sssssssssssssssssss", s)
-                // console.log('ahfoeiawoehfwaoef', (s.parkName === lot && s.licensePlateNumber === plateNumber && create >= entry && create <= exit));
-                console.log("entry => ", entryUtc)
-                console.log("exit => ", exitUtc)
-                console.log("create => ", create)
-                console.log('ahfoeiawoehfwaoef', (create >= entryUtc && create <= exitUtc));
 
                 return (s.parkName === lot && s.licensePlateNumber === plateNumber && create >= entryUtc && create <= exitUtc);
             });
-            console.log('session', session);
 
 
             if (session) {
-                console.log('Hello', { createDate: session['createDate'], status: session['status'], amount: session['amount'] });
 
                 return { createDate: session['createDate'], status: session['status'], amount: '$' + session['amount'] };
 
@@ -304,9 +283,8 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             </>
                                         } sortable style={{ width: '30%' }}></Column> */}
                                         <Column header="Entry Time" body={(item: ConsolidatedRecord) => 
-                                            <>{console.log("item", item.entryTime)}
+                                            <>
                                                 {<span>{item.entryTime ? formatDate(item.entryTime) : ""}</span>}
-                                                {console.log("item===============", (item.entryTime))}
                                             </>
                                         } sortable style={{ width: '20%' }}></Column>
                                         <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
@@ -368,7 +346,6 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             </>
                                         } sortable style={{ width: '25%' }}></Column>
                                         <Column field='created date' header='Paid time' body={(item: ConsolidatedRecord) => {
-                                            console.log("eexut", item.exitTime);
 
                                             if (item.entryTime && item.exitTime) {
 
@@ -467,7 +444,6 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             </>
                                         } sortable style={{ width: '30%' }}></Column>
                                         <Column field='created date' header='Paid time' body={(item: ConsolidatedRecord) => {
-                                            console.log("eexut", item.exitTime);
 
                                             if (item.entryTime && item.exitTime) {
 
