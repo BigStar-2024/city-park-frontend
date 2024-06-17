@@ -7,7 +7,6 @@ import { useAuthorize } from '../store/store';
 import { DataItem, ConsolidatedRecord } from '../types';
 import { TabView, TabPanel } from 'primereact/tabview';
 import './TabViewDemo.css';
-import { color } from 'd3-color';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -156,29 +155,28 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         </>;
     };
 
-    let usedPaymentLogs: string[] = []; // Define usedPaymentLogs as an array of strings
 
-    let count: number = 0; // Initialize count variable
+    const getLogData = (lot: string, plateNumber: string, entryTime: string, exitTime: string): any => {
+
+        if (entryTime && exitTime) {
 
 
-    const getLogData = (lot: string, plateNumber: string): any => {
+            const entry = new Date(entryTime)
+            const exit = new Date(exitTime)
 
-        const session = paidSessions.find((s: any) => s.parkName === lot && s.licensePlateNumber === plateNumber && !usedPaymentLogs.includes(s._id));
+            const session = paidSessions.find((s: any) => {
+                const create = new Date(s.createDate);
+                return (s.parkName === lot && s.licensePlateNumber === plateNumber && create >= entry && create <= exit);
+            });
 
-        if (session) {
-            console.log("----->", usedPaymentLogs);
-            count++;
-            if (count == 3) {
-                count = 0;
-                usedPaymentLogs.push(session._id)
-                console.log("======>", usedPaymentLogs);
+            if (session) {
+                console.log('Hello', { createDate: session['createDate'], status: session['status'], amount: session['amount'] });
+
+                return { createDate: session['createDate'], status: session['status'], amount: '$' + session['amount'] };
+
+            } else {
+                return { createDate: "", status: "", amount: "" };
             }
-            console.log('Hello', { createDate: session['createDate'], status: session['status'], amount: session['amount'] });
-
-            return { createDate: session['createDate'], status: session['status'], amount: '$' + session['amount'] };
-
-        } else {
-            return { createDate: "", status: "", amount: "" };
         }
     };
     // Utility function to calculate parking time in hours
@@ -188,45 +186,34 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
         const periodTime = (exitDate.getTime() - entryDate.getTime()) / 3600000; // Convert milliseconds to hours
         return periodTime;
     };
+
+    const hourlyRate = 3;
     // Filtering data based on the condition
-    // const violationArr = dataArr.filter((item) => {
-    //     if (item.entryTime && item.exitTime) {
-    //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
-    //         const amount = getLogData(item.lot, item.plateNumber).amount;
-    //         return amount < 3 * parkingTimeInHours;
-    //     }
-    //     return false;
-    // });
-    const non_violationArr = dataArr.filter(item =>
-        !violationArr.some(violation =>
-            violation.lot === item.lot && violation.plateNumber === item.plateNumber
-        )
-    );
-    // const violationArr = dataArr.filter((item) => {
-    //     if (item.entryTime && item.exitTime) {
-    //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
-    //         const amount = getLogData(item.lot, item.plateNumber).amount;
-    //         let extractedNumber = parseFloat(amount.replace(/[^0-9.]/g, ''));
-    //         extractedNumber = isNaN(extractedNumber) ? 0 : extractedNumber;
-    //         return extractedNumber < 3 * parkingTimeInHours;
-    //     }
-    //     return false;
-    // });
-    // const non_violationArr = dataArr.filter((item) => {
-    //     console.log('item', item);
+    const violationArr = dataArr.filter((item) => {
+        if (item.entryTime && item.exitTime) {
+            const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+            const amount = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime).amount;
 
-    //     if (item.entryTime && item.exitTime) {
-    //         const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
-    //         const amount = getLogData(item.lot, item.plateNumber).amount;
+            const amountValue = amount && amount !== '$' ? parseFloat(amount.replace('$', '')) : 0;
+            return amountValue < (hourlyRate * parkingTimeInHours);
+        }
+        return false;
+    });
 
-    //         let extractedNumber = parseFloat(amount.replace(/[^0-9.]/g, ''));
-    //         extractedNumber = isNaN(extractedNumber) ? 0 : extractedNumber;
-    //         console.log('afe', extractedNumber);
+    const non_violationArr = dataArr.filter((item) => {
+        if (item.entryTime && item.exitTime) {
+            const parkingTimeInHours = calculateParkingTimeInHours(item.entryTime, item.exitTime);
+            const amount = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime).amount;
 
-    //         return extractedNumber > 3 * parkingTimeInHours;
-    //     }
-    //     return false;
-    // });
+            const amountValue = amount && amount !== '$' ? parseFloat(amount.replace('$', '')) : 0;
+            return amountValue >= (hourlyRate * parkingTimeInHours);
+        }
+        return false;
+    }); 
+
+    const errorArr = dataArr.filter(item => !violationArr.includes(item)).filter(item => !non_violationArr.includes(item))
+     
+
 
 
     return (
@@ -311,27 +298,40 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                             <>
                                                 {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '15%' }}></Column>
+                                        } sortable style={{ width: '20%' }}></Column>
                                         <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '15%' }}></Column>
-                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
+                                        } sortable style={{ width: '20%' }}></Column>
+                                        {/* <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
                                             <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
+                                                {<span>{getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime)?.createDate || ''}</span>}
                                             </>
-                                        } sortable style={{ width: '24%' }}></Column>
+                                        } sortable style={{ width: '24%' }}></Column> */}
+
+
+
+                                        <Column field='created date' header='Paid time' body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime); 
+
+                                                return <span>{logData.createDate}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '24%' }}></Column>
                                         {/* <Column field="paid result" header="Paid Status" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
                                             </>
                                         } sortable style={{ width: '20%' }}></Column> */}
-                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
-                                            </>
-                                        } sortable style={{ width: '20%' }}></Column>
+                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime); 
+                                                return <span>{logData.amount}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>}
                                 <TabPanel header="Non-Violation">
@@ -346,27 +346,34 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                         }}>
                                         <Column field="lot" header="Lot name" sortable style={{ width: '10%' }}></Column>
                                         <Column field="plateNumber" header="Plate number" sortable style={{ width: '10%' }}></Column>
-                                        <Column field="plate" header="" body={plateNumberBody} style={{ width: '10%' }}></Column>
+                                        {/* <Column field="plate" header="" body={plateNumberBody} style={{ width: '15%' }}></Column> */}
                                         <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '15%' }}></Column>
+                                        } sortable style={{ width: '25%' }}></Column>
                                         <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
                                             <>
                                                 {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
                                             </>
-                                        } sortable style={{ width: '15%' }}></Column>
-                                        <Column field="created date" header="Paid time" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).createDate}</span>}
-                                            </>
-                                        } sortable style={{ width: '20%' }}></Column>
-                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
-                                            </>
-                                        } sortable style={{ width: '10%' }}></Column>
+                                        } sortable style={{ width: '25%' }}></Column>
+                                        <Column field='created date' header='Paid time' body={(item: ConsolidatedRecord) => {
+                                            console.log("eexut", item.exitTime);
+                                            
+                                            if (item.entryTime && item.exitTime) {
+
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <span>{logData.createDate}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '24%' }}></Column>
+                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <span>{logData.amount}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>
                                 <TabPanel header="Violations">
@@ -404,26 +411,69 @@ export default function ParkingSessionTable({ siteCode }: { siteCode?: string })
                                                 {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us", { dateStyle: 'short' }) : ""}</span>}
                                             </>
                                         } sortable style={{ width: '15%' }}></Column>
-                                        <Column field="paid status" header="Paid Status" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).status}</span>}
-                                            </>
-                                        } sortable style={{ width: '10%' }}></Column>
-                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) =>
-                                            <>
-                                                {<span>{getLogData(item.lot, item.plateNumber).amount}</span>}
-                                            </>
-                                        } sortable style={{ width: '10%' }}></Column>
-                                        <Column field="charge notice" header="Ticket template" body={(item: ConsolidatedRecord) =>
+                                        <Column field="paid status" header="Paid Status" body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <p className='violation_status'>{logData.status.replace('succeeded', 'Not Enough')}</p>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '20%' }}></Column>
+                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <span>{logData.amount}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '10%' }}></Column>
+                                        <Column field="charge notice" header="Ticket template" body={() =>
                                             <>
                                                 {<div><button className='temp_pdf temp_edit'>   Edit   </button></div>}
-                                                {<div><button  className='temp_pdf'>Sent / Open</button></div>}                                                
+                                                {<div><button className='temp_pdf'>Sent / Open</button></div>}
                                             </>
                                         } sortable style={{ width: '20%' }}></Column>
                                     </DataTable>
                                 </TabPanel>
                                 {user?.customClaims.admin && <TabPanel header="Error">
-                                    <h1>Now, there aren't any errors.</h1>
+                                <DataTable paginator rows={5} pageLinkSize={2} rowsPerPageOptions={[5, 10, 25, 50]}
+                                        value={errorArr} tableStyle={{ minWidth: '50rem' }} pt={{
+                                            thead: { className: "text-[14px]" },
+                                            paginator: {
+                                                pageButton: ({ context }: { context: any }) => ({
+                                                    className: context.active ? 'bg-blue-500 text-white text-[12px]' : undefined,
+                                                }),
+                                            },
+                                        }}>
+                                        <Column field="lot" header="Lot name" sortable style={{ width: '15%' }}></Column>
+                                        <Column field="plateNumber" header="Plate number" sortable style={{ width: '15%' }}></Column>
+                                        {/* <Column field="plate" header="" body={plateNumberBody} style={{ width: '15%' }}></Column> */}
+                                        <Column header="Entry Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.entryTime ? new Date(item.entryTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '30%' }}></Column>
+                                        <Column header="Exit Time" body={(item: ConsolidatedRecord) =>
+                                            <>
+                                                {<span>{item.exitTime ? new Date(item.exitTime).toLocaleString("en-us") : ""}</span>}
+                                            </>
+                                        } sortable style={{ width: '30%' }}></Column>
+                                        <Column field='created date' header='Paid time' body={(item: ConsolidatedRecord) => {
+                                            console.log("eexut", item.exitTime);
+                                            
+                                            if (item.entryTime && item.exitTime) {
+
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <span>{logData.createDate}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '30%' }}></Column>
+                                        <Column field="paid amount" header="Paid Amount" body={(item: ConsolidatedRecord) => {
+                                            if (item.entryTime && item.exitTime) {
+                                                const logData = getLogData(item.lot, item.plateNumber, item.entryTime, item.exitTime);
+                                                return <span>{logData.amount}</span>;
+                                            }
+                                            return <span></span>;
+                                        }} sortable style={{ width: '30%' }}></Column>
+                                    </DataTable>
                                 </TabPanel>}
                             </TabView>
                         </div>
